@@ -76,6 +76,10 @@ kafka:
       session.timeout.ms: 30000
 
 ns4kafka:
+  conduktor:
+    enabled: true
+    url: "http://localhost"
+    token: "AZERTY"
   # This section lets ns4kafka be used as JWT Claim generator for AKHQ.
   # This will generate the required payload for AKHQ during authentication in the form :
   # {

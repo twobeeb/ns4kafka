@@ -23,6 +23,7 @@ public class KafkaAsyncExecutorConfig {
     private boolean dropUnsyncAcls = true;
     private boolean manageUsers;
     private boolean manageConnectors;
+    private boolean manageConduktor;
     private KafkaProvider provider;
     private Properties config;
     private Map<String, ConnectConfig> connects;

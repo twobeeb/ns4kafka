@@ -62,7 +62,7 @@ public class ConduktorAsyncExecutor {
                 .flatMap(config -> namespaceRepository.findAllForCluster(config.getName()).stream())
                 .toList();
         // List groups in Conduktor
-        var groups = conduktorClient.listGroups();
+        //var groups = conduktorClient.listGroups();
         //var ns = namespaces.get(0);
 
         List<PlatformGroup> cdkGroups = conduktorClient.listGroups()
@@ -96,7 +96,7 @@ public class ConduktorAsyncExecutor {
             conduktorClient.createGroup(
                     PlatformGroup.builder()
                             .groupId(namespaceToGroupId(namespace))
-                            .description("PLEASE STOP")
+                            .description(Optional.of(namespace.getMetadata().getLabels().get("description")).orElse("<empty>"))
                             .name(String.format(GROUP_NAME, namespace.getMetadata().getName()))
                             .externalGroups(Optional.of(namespace.getMetadata().getLabels().get("ldap-group")).stream().toList())
                             .build());
@@ -113,7 +113,7 @@ public class ConduktorAsyncExecutor {
                 conduktorClient.updateGroup(platformGroup.getGroupId(),
                         PlatformGroup.builder()
                                 //.groupId(namespaceToGroupId(namespace))
-                                .description("PLEASE STOP")
+                                .description(Optional.of(ns.getMetadata().getLabels().get("description")).orElse("<empty>"))
                                 .name(String.format(GROUP_NAME, ns.getMetadata().getName()))
                                 .externalGroups(Optional.of(ns.getMetadata().getLabels().get("ldap-group")).stream().toList())
                                 .build());
@@ -133,7 +133,7 @@ public class ConduktorAsyncExecutor {
         // If so, we just PUT all the permissions
         // Optimisations welcome.
         var groupId = namespaceToGroupId(namespace);
-        var acls = accessControlEntryService.findAllForNamespace(namespace);
+        var acls = accessControlEntryService.findAllGrantedToNamespace(namespace);
 
         // scope of CDK sync
         var KEEP_RESOURCES = List.of(ResourceType.TOPIC,
@@ -179,8 +179,8 @@ public class ConduktorAsyncExecutor {
             case CONNECT:
                 var connectorPermission = new PlatformPermission.ConnectorPermission();
                 connectorPermission.setClusterId(acl.getMetadata().getCluster());
-                connectorPermission.setConnectorId(null);
-                connectorPermission.setConnectNamePattern(acl.getSpec().getResource()+(acl.getSpec().getResourcePatternType().equals(AccessControlEntry.ResourcePatternType.PREFIXED)?"*":""));
+                connectorPermission.setConnectClusterId("*");
+                connectorPermission.setConnectorNamePattern(acl.getSpec().getResource()+(acl.getSpec().getResourcePatternType().equals(AccessControlEntry.ResourcePatternType.PREFIXED)?"*":""));
                 connectorPermission.setPermissions(List.of("kafkaConnectorStatus", "kafkaConnectRestart", "kafkaConnectPauseResume"));
                 return List.of(connectorPermission);
             default:

@@ -48,8 +48,8 @@ public abstract class PlatformPermission {
     @NoArgsConstructor
     public static class ConnectorPermission extends PlatformPermission {
         private String resourceType="KafkaConnect";
-        private String connectorId;
-        private String connectNamePattern;
+        private String connectClusterId;
+        private String connectorNamePattern;
     }
     @Data
     @NoArgsConstructor

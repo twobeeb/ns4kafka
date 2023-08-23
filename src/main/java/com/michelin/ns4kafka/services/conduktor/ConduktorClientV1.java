@@ -9,14 +9,14 @@ import io.micronaut.http.client.annotation.Client;
 
 import java.util.List;
 
-@Client(value = "${ns4kafka.conduktor.url}/admin/api/public/v1/")
+@Client(value = "${ns4kafka.conduktor.url}/public/v1/")
 @Header(name = HttpHeaders.AUTHORIZATION, value = "Bearer ${ns4kafka.conduktor.token}")
 public interface ConduktorClientV1 {
     @Get("/groups")
     List<PlatformGroup> listGroups();
 
     @Post("/groups")
-    HttpResponse<Void> createGroup(@Body PlatformGroup data);
+    void createGroup(@Body PlatformGroup data);
 
     @Put("/groups/{group}")
     void updateGroup(String group, @Body PlatformGroup data);

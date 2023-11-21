@@ -8,6 +8,7 @@ import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -25,6 +26,9 @@ public class KafkaAsyncExecutorScheduler {
 
     @Inject
     List<UserAsyncExecutor> userAsyncExecutors;
+
+    @Inject
+    Optional<ConduktorAsyncExecutor> conduktorAsyncExecutor;
 
     private final AtomicBoolean ready = new AtomicBoolean(false);
 
@@ -47,6 +51,7 @@ public class KafkaAsyncExecutorScheduler {
             accessControlEntryAsyncExecutors.forEach(AccessControlEntryAsyncExecutor::run);
             connectorAsyncExecutors.forEach(ConnectorAsyncExecutor::run);
             userAsyncExecutors.forEach(UserAsyncExecutor::run);
+            conduktorAsyncExecutor.ifPresent(ConduktorAsyncExecutor::run);
         } else {
             log.warn("Scheduled jobs did not start because Micronaut is not ready yet");
         }
